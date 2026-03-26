@@ -1,0 +1,60 @@
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+#ifndef _ASM_GENERIC_PGTABLE_NOPUD_H_
+#define _ASM_GENERIC_PGTABLE_NOPUD_H_
+
+#include <asm-generic/pgtable-nop4d.h>
+
+typedef p4d_t pud_t;
+
+#define PUD_SHIFT       P4D_SHIFT
+#define PUD_SIZE        (_AC(1,ULL) << PUD_SHIFT)
+#define PUD_MASK        (~(PUD_SHIFT - 1))
+#define PTRS_PER_PUD    1
+
+#define pud_bound_size pud_bound_size
+static inline size_t pud_bound_size(uintptr_t addr, size_t size)
+{
+    return size;
+}
+
+#define pud_offset pud_offset
+static inline pud_t *pud_offset(p4d_t *p4d, uintptr_t addr)
+{
+    return (pud_t *)p4d;
+}
+
+/**
+ * Typical architecture set definition.
+ */
+
+#define p4d_present p4d_present
+static inline bool p4d_present(p4d_t *p4d)
+{
+    return true;
+}
+
+#define p4d_inval p4d_inval
+static inline bool p4d_inval(p4d_t *p4d)
+{
+    return false;
+}
+
+#define p4d_clear p4d_clear
+static inline void p4d_clear(p4d_t *p4d)
+{
+    /* Nothing */
+}
+
+#define p4d_none p4d_none
+static inline bool p4d_none(p4d_t *p4d)
+{
+    return true;
+}
+
+#define p4d_get_huge p4d_get_huge
+static inline bool p4d_get_huge(p4d_t *p4d)
+{
+    return false;
+}
+
+#endif /* _ASM_GENERIC_PGTABLE_PUD_H_ */

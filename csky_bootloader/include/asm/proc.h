@@ -1,0 +1,23 @@
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+#ifndef _ASM_CSKY_PROC_H_
+#define _ASM_CSKY_PROC_H_
+
+#include <stdint.h>
+#include <stddef.h>
+#include <state.h>
+#include <asm/regs.h>
+#include <asm/barrier.h>
+
+struct sched_task;
+
+void proc_thread_setup(struct regs *regs, uint32_t ip, uint32_t sp);
+state proc_thread_switch(struct sched_task *prev, struct sched_task *next);
+
+void proc_idle(void);
+void __noreturn proc_reset(void);
+void __noreturn proc_halt(void);
+void __noreturn proc_poweroff(void);
+
+#define cpu_relax() barrier()
+
+#endif /* _ASM_CSKY_PROC_H_ */
