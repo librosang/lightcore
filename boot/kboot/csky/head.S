@@ -15,7 +15,11 @@ GLOBAL(_start)
 END(_start)
 
 GLOBAL(kernel_start)
-    jmp     a0
+    mov     r4, a0
+    mov     a0, a1
+    mov     a1, a2
+    mov     a2, a3
+    jmp     r4
 END(kernel_start)
 
 GLOBAL(halt)

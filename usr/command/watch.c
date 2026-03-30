@@ -78,7 +78,7 @@ static state watch_main(struct kshell_context *ctx, int argc, char *argv[])
         retval = kshell_execv(ctx, argv[count], argc - count, &argv[count]);
         if (unlikely(retval)) {
             if (flags & FLAG_BEEPNZ)
-                buzzer_beep(READ_ONCE(default_buzzer), BELL_PITCH, BELL_DURATION);
+                buzzer_beep(default_buzzer, BELL_PITCH, BELL_DURATION);
             if (flags & FLAG_EXITNZ)
                 return retval;
         }

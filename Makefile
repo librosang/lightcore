@@ -37,7 +37,11 @@ endif
 # Compiler                          #
 #####################################
 
+ifdef CONFIG_KBOOT_LINUX
+build/boot/kboot: asm-generic FORCE
+else
 build/boot/kboot: build FORCE
+endif
 build/boot/preload: asm-generic FORCE
 
 kboot: build/boot/kboot FORCE
@@ -47,7 +51,7 @@ tools: build/tools/kernelcrc build/tools/mkincbin FORCE
 build: asm-generic scripts_basic tools FORCE
 	$(Q)$(MAKE) $(build)=$(srctree)
 
-disk uboot: kboot preload FORCE
+disk uboot merged: kboot preload FORCE
 	$(Q)$(MAKE) $(build)=$(srctree)/boot $@
 
 ifdef CONFIG_PRELOAD

@@ -7,7 +7,12 @@
 #include <irqflags.h>
 #include <export.h>
 
-state proc_thread_switch(struct sched_task *prev, struct sched_task *next)
+state proc_thread_switch(struct sched_task *prev)
+{
+    return -ENOERR;
+}
+
+state proc_thread_copy(struct task_clone_args *args, struct sched_task *child)
 {
     return -ENOERR;
 }
@@ -25,7 +30,7 @@ void proc_idle(void)
 
 void __noreturn proc_halt(void)
 {
-    irq_local_disable();
+    arch_irq_disable();
     for (;;)
     proc_idle();
 }

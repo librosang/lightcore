@@ -20,30 +20,34 @@ struct ggpio_device {
 #define gpio_to_ggpio(ggpio) \
     container_of(ggpio, struct ggpio_device, gpio)
 
-static bool ggpio_value_get(struct gpio_device *gdev, unsigned int port)
+static state ggpio_value_get(struct gpio_device *gdev, unsigned int port, bool *value)
 {
     struct ggpio_device *ggdev = gpio_to_ggpio(gdev);
-    return readl(ggdev->dat) >> port & 0x01;
+    *value = !!(readl(ggdev->dat) >> port & 0x01);
+    return -ENOERR;
 }
 
-static void ggpio_value_set(struct gpio_device *gdev, unsigned int port, bool value)
+static state ggpio_value_set(struct gpio_device *gdev, unsigned int port, bool value)
 {
     struct ggpio_device *ggdev = gpio_to_ggpio(gdev);
     uint32_t val = readl(ggdev->dirout) & ~(1 << port);
-    writel(ggdev->dirout, val | (1 << port));
+    writel(ggdev->dirout, val | ((uint32_t)value << port));
+    return -ENOERR;
 }
 
-static enum gpio_direction ggpio_direction_get(struct gpio_device *gdev, unsigned int port)
+static state ggpio_direction_get(struct gpio_device *gdev, unsigned int port, enum gpio_direction *dir)
 {
     struct ggpio_device *ggdev = gpio_to_ggpio(gdev);
-    return readl(ggdev->dirout) >> port & 0x01 ? GPIO_DIRECTION_OUTPUT : GPIO_DIRECTION_INPUT;
+    *dir = readl(ggdev->dirout) >> port & 0x01 ? GPIO_DIRECTION_PUSH : GPIO_DIRECTION_INPUT;
+    return -ENOERR;
 }
 
-static void ggpio_direction_set(struct gpio_device *gdev, unsigned int port, enum gpio_direction dire)
+static state ggpio_direction_set(struct gpio_device *gdev, unsigned int port, enum gpio_direction dire)
 {
     struct ggpio_device *ggdev = gpio_to_ggpio(gdev);
     uint32_t val = readl(ggdev->dirout) & ~(1 << port);
-    writel(ggdev->dirout, val | ((dire == GPIO_DIRECTION_OUTPUT) << port));
+    writel(ggdev->dirout, val | ((dire == GPIO_DIRECTION_PUSH) << port));
+    return -ENOERR;
 }
 
 static struct gpio_ops ggpio_ops = {

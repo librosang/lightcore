@@ -102,12 +102,52 @@ typedef __kernel_mqd_t          mqd_t;
 #define BYTES_PER_UINTMAX       sizeof(uintmax_t)
 #define BYTES_PER_UINTPTR       sizeof(uintptr_t)
 
+#ifndef __SCHAR_WIDTH__
+#define __SCHAR_WIDTH__ 8
+#endif
+
+#ifndef __SHRT_WIDTH__
+#define __SHRT_WIDTH__ 16
+#endif
+
+#ifndef __INT_WIDTH__
+#define __INT_WIDTH__ (__SIZEOF_INT__ * 8)
+#endif
+
+#ifndef __LONG_WIDTH__
+#define __LONG_WIDTH__ (__SIZEOF_LONG__ * 8)
+#endif
+
+#ifndef __LONG_LONG_WIDTH__
+#define __LONG_LONG_WIDTH__ (__SIZEOF_LONG_LONG__ * 8)
+#endif
+
+/* Fallback macro concatenation requires strict integer literals but hopefully SIZEOF evaluates properly or we just hardcode 32/64 */
+
+#if __SIZEOF_INT__ == 4 && !defined(INT_WIDTH_LITERAL)
+#define INT_WIDTH 32
+#elif __SIZEOF_INT__ == 8 && !defined(INT_WIDTH_LITERAL)
+#define INT_WIDTH 64
+#else
+#define INT_WIDTH               __INT_WIDTH__
+#endif
+
 #define CHAR_WIDTH              __SCHAR_WIDTH__
 #define SHRT_WIDTH              __SHRT_WIDTH__
-#define INT_WIDTH               __INT_WIDTH__
-#define LONG_WIDTH              __LONG_WIDTH__
-#define LLONG_WIDTH             __LONG_LONG_WIDTH__
-#define INTMAX_WIDTH            __LONG_LONG_WIDTH__
+
+#if __SIZEOF_LONG__ == 4
+#define LONG_WIDTH 32
+#else
+#define LONG_WIDTH 64
+#endif
+
+#if __SIZEOF_LONG_LONG__ == 8
+#define LLONG_WIDTH 64
+#endif
+
+#ifndef INTMAX_WIDTH
+#define INTMAX_WIDTH            LLONG_WIDTH
+#endif
 
 #endif /* __ASSEMBLY__ */
 #endif /* _TYPES_H_ */

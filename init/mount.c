@@ -10,6 +10,7 @@
 #include <filesystem.h>
 #include <printk.h>
 
+#ifdef CONFIG_BLOCK
 static state __init auto_mount(const char *devn, enum mount_flags flags)
 {
     struct filesystem_type *fs;
@@ -41,6 +42,8 @@ exit:
     return -ENOENT;
 }
 
+#endif
+
 #ifdef CONFIG_BLOCK
 static state __init mount_block_root(void)
 {
@@ -57,7 +60,7 @@ static state __init mount_romdisk_root(void)
 
 state __init mount_rootfs(void)
 {
-    state ret;
+    state ret = -ENOENT;
 
 #ifdef CONFIG_BLOCK
     ret = mount_block_root();

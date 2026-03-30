@@ -44,7 +44,7 @@ struct buzzer_ops {
 
 #ifndef CONFIG_BUZZER
 
-#define default_buzzer NULL
+extern struct buzzer_device *default_buzzer;
 
 static inline state buzzer_start(struct buzzer_device *bdev)
 {
@@ -66,10 +66,7 @@ static inline state buzzer_freq_set(struct buzzer_device *bdev, enum buzzer_freq
     return -ENOERR;
 }
 
-static inline state buzzer_freq_set(struct buzzer_device *bdev, enum buzzer_frequency freq)
-{
-    return -ENOERR;
-}
+
 
 static inline state buzzer_beep(struct buzzer_device *bdev, enum buzzer_frequency freq, int64_t msec)
 {

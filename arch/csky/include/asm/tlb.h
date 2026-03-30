@@ -30,4 +30,9 @@ static inline void tlb_inval_all(void)
 
 void tlb_refresh(size_t addr);
 
-#endif /* _ASM_CSKY_TLBFLUSH_H_ */
+static inline void tlb_inval_range(size_t addr, size_t size)
+{
+    tlb_inval_all();
+}
+
+#endif /* _ASM_CSKY_TLB_H_ */

@@ -7,10 +7,18 @@
 #include <asm/regs.h>
 #include <asm/barrier.h>
 
+struct proc_context {
+    size_t flags;
+    size_t sp;
+};
+
 struct sched_task;
 
+struct task_clone_args;
+
 void proc_thread_setup(struct regs *regs, size_t ip, size_t sp);
-state proc_thread_switch(struct sched_task *prev, struct sched_task *next);
+state proc_thread_switch(struct sched_task *prev);
+state proc_thread_copy(struct task_clone_args *args, struct sched_task *child);
 
 void proc_idle(void);
 void __noreturn proc_reset(void);

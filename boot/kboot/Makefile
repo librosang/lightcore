@@ -8,13 +8,14 @@ obj-y += $(arch)/ lib/ piggy.o
 extra-y += $(arch)/boot.lds
 
 include-y += $(arch)/include/ lib/
+kboot-ccflags-y  += -I$(src)/$(arch) -I$(src)/lib
 
 kboot-asflags-y  += -D__ASSEMBLY__
 kboot-ccflags-y  += -std=gnu11 -Wall -Werror
 kboot-acflags-y  += -ffreestanding -nostdinc
 kboot-acflags-y  += -fno-stack-protector -fno-common
 kboot-acflags-y  += -ffunction-sections -fdata-sections
-kboot-ldsflags-y += -D__ASSEMBLY__
+kboot-ldsflags-y += -D__ASSEMBLY__ -I$(src)/$(arch)
 kboot-elfflags-y += -nostdlib --gc-sections
 kboot-elfflags-y += $(call ld-option, --no-dynamic-linker)
 kboot-elfflags-y += -T $(obj)/$(arch)/boot.lds -Map=$@.map
@@ -47,9 +48,20 @@ quiet_cmd_copy_kernel = $(ECHO_BIN) $@
       cmd_copy_kernel = $(OBJCOPY) -O binary $< $@
 quiet_cmd_fix_kernel  = FIXCRC $@
       cmd_fix_kernel  = $(objtree)/tools/kernelcrc/kernelcrc $@
+ifdef CONFIG_KBOOT_LINUX
+$(obj)/kernel.bin: $(srctree)/$(subst ",,$(CONFIG_KBOOT_LINUX_UIMAGE)) FORCE
+	$(Q)cp -f $< $@
+
+$(obj)/dtb.S: $(srctree)/$(subst ",,$(CONFIG_KBOOT_LINUX_DTB)) FORCE
+	$(Q)$(objtree)/tools/mkincbin/mkincbin .dtbdata $< > $@
+
+obj-y += dtb.o
+targets += dtb.S
+else
 $(obj)/kernel.bin: lightcore
 	$(call if_changed,copy_kernel)
 	$(call if_changed,fix_kernel)
+endif
 
 $(obj)/kernel.bin.gz: $(obj)/kernel.bin FORCE
 	$(call if_changed,gzip)
@@ -83,4 +95,4 @@ targets += piggy.S kernel.bin$(suffix-y)
 
 clean-suffix += .gz .bz2 .lzma .xz .lzo .lz4 .zst
 clean-y += $(addprefix kernel.bin,$(clean-suffix))
-clean-y += kernel.bin piggy.S
+clean-y += kernel.bin piggy.S dtb.S

@@ -8,7 +8,7 @@
 
 #include <initcall.h>
 #include <irq.h>
-#include <timer.h>
+#include <timekeeping.h>
 #include <driver/irqchip.h>
 #include <driver/platform.h>
 #include <driver/clocksource.h>
@@ -46,7 +46,7 @@ irqreturn_t gx6605s_clksrc_handle(irqnr_t vector, void *data)
     struct gx6605s_device *gdev = data;
 
     gx6605s_clksrc_clear(gdev);
-    timer_tick();
+    timekeeping_tick();
 
     return IRQ_RET_HANDLED;
 }

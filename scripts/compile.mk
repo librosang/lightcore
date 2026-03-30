@@ -31,7 +31,7 @@ sys-acflags-y += -fno-pic -fno-pie
 sys-cxflags-y += -nostdinc -fno-builtin -static
 sys-cxflags-y += -fno-common
 sys-cxflags-y += -ffreestanding
-sys-ccflags-y += -std=gnu17
+sys-ccflags-y += -std=gnu11
 sys-cxxflags-y += -std=gnu++17 -fpermissive -Wno-pointer-arith
 
 # disable pointer signed / unsigned warnings in gcc 4.0

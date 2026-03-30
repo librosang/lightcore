@@ -16,8 +16,13 @@ void kernel_check(void *addr)
     pr_boot("  start: %p\n", addr);
     pr_boot("  size: %#x\n", size);
 
-    if (strcmp((char *)&boot_head->magic, "lightcore!"))
+    if (strcmp((char *)&boot_head->magic, "lightcore!")) {
+#ifdef CONFIG_KBOOT_LINUX
+        pr_boot("  not lightcore, skipping verification...\n");
+        return;
+#endif
         panic("can't find kernel!\n");
+    }
 
     crc32old = boot_head->crc;
     crc32new = crc32_inline((uint8_t *)(boot_head + 1), size, 0xffffffff);

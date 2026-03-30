@@ -8,4 +8,20 @@ config LOAD_ADDR
     help
         The physical address where the boot image is loaded
 
+config KBOOT_LINUX
+    bool "Kboot load Linux kernel"
+    default n
+    help
+        If enabled, Kboot will load an external Linux kernel and DTB file.
+
+config KBOOT_LINUX_UIMAGE
+    string "Linux uImage path"
+    depends on KBOOT_LINUX
+    default "linux/uImage"
+
+config KBOOT_LINUX_DTB
+    string "Linux DTB path"
+    depends on KBOOT_LINUX
+    default "linux/gx6605s.dtb"
+
 source "boot/kboot/x86/Kconfig"

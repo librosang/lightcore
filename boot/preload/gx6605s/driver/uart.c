@@ -14,7 +14,7 @@ void uart_print(const char *str)
     while (*str) {
         while (!(readl(SER_BASE + GX6605S_UART_STA) & GX6605S_UART_STA_THRE))
             cpu_relax();
-        writel(SER_BASE + GX6605S_UART_DAT, ch);
+        writel(SER_BASE + GX6605S_UART_DAT, *str++);
     }
 }
 

@@ -4,6 +4,7 @@
  */
 
 #include <linkage.h>
+#include <panic.h>
 #include <irq.h>
 #include <irqflags.h>
 #include <asm/entry.h>

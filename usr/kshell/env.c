@@ -213,7 +213,7 @@ static state generic_putenv(struct rb_root *head, bool check, const char *string
                 goto failed;
             break;
 
-        case '+': /* appending more text to value */
+        case '+': { /* appending more text to value */
             struct kshell_env *env;
             size_t origin, append;
             char *block;
@@ -249,6 +249,7 @@ static state generic_putenv(struct rb_root *head, bool check, const char *string
             if (retval)
                 goto failed;
             break;
+        }
 
         default:
             retval = -EINVAL;

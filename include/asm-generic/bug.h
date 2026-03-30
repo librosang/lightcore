@@ -5,6 +5,8 @@
 #ifndef __ASSEMBLY__
 # include <once.h>
 # include <bitflags.h>
+# include <panic.h>
+# include <printk.h>
 
 enum crash_flags {
     __CRASH_FLAG_NCUT_HERE = 0,

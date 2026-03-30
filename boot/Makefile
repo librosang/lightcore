@@ -57,6 +57,12 @@ ifneq ($(CONFIG_CHIP_GX6605S),)
 cmd_disk = rm -f $(obj)/disk.img; \
            $(DD) if=$(obj)/preload/preload.bin of=$(obj)/disk.img bs=512 conv=notrunc; \
            $(DD) if=$(obj)/uImage of=$(obj)/disk.img bs=512 seek=16 conv=notrunc
+
+quiet_cmd_merged = MERGED $@
+      cmd_merged = cat $(obj)/preload/preload.bin > $@.tmp; \
+                   truncate -s 8192 $@.tmp; \
+                   cat $(obj)/uImage >> $@.tmp; \
+                   mv $@.tmp $@
 endif
 
 ifneq ($(CONFIG_CHIP_SUNIV),)
@@ -71,6 +77,10 @@ $(obj)/disk.img: $(obj)/preload/preload.bin $(obj)/uImage FORCE
 	$(call if_changed,disk)
 disk: $(obj)/disk.img
 
-targets += kboot/boot.bin preload/preload.bin uImage disk.img
-clean-y += uImage disk.img romdisk.cpio
+$(obj)/gx6605s.bin: $(obj)/preload/preload.bin $(obj)/uImage FORCE
+	$(call if_changed,merged)
+merged: $(obj)/gx6605s.bin
+
+targets += kboot/boot.bin preload/preload.bin uImage disk.img gx6605s.bin
+clean-y += uImage disk.img gx6605s.bin romdisk.cpio
 clean-subdir-y += kboot/ preload/ dts/

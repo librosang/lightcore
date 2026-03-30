@@ -4,6 +4,7 @@
  */
 
 #include <linkage.h>
+#include <panic.h>
 #include <kernel.h>
 #include <printk.h>
 #include <asm/backtrace.h>

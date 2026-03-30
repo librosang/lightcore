@@ -23,8 +23,8 @@ static state ioremap_testing(struct kshell_context *ctx, void *pdata)
     size_t size;
 
     for (count = 0; count < TEST_LOOP; ++count) {
-        phys = page_align(clamp(prandom_value(), CONFIG_HIGHMEM_OFFSET,
-                            PHYS_MASK - (TEST_SIZE * 2)));
+        phys = page_align(clamp((phys_addr_t)prandom_value(), (phys_addr_t)CONFIG_HIGHMEM_OFFSET,
+                            (phys_addr_t)(PHYS_MASK - (TEST_SIZE * 2))));
         size = page_align(prandom_value() % TEST_SIZE + TEST_SIZE);
         kshell_printf(ctx, "ioremap test%02u addr (%#lx) size (%#lx): ", count, phys, size);
         test_pool[count] = ioremap(phys, size);
