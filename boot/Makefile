@@ -20,10 +20,10 @@ UIMAGE_NAME         ?= 'Lightcore-$(KERNELVERSION)'
 
 quiet_cmd_uimage = UIMAGE $@
       cmd_uimage = $(BASH) $(MKIMAGE) -A $(UIMAGE_ARCH) -O invalid      \
-                        -C $(UIMAGE_COMPRESSION) $(UIMAGE_OPTS-y)       \
-                        -T $(UIMAGE_TYPE)                               \
-                        -a $(UIMAGE_LOADADDR) -e $(UIMAGE_ENTRYADDR)    \
-                        -n $(UIMAGE_NAME) -d $< $@
+	      -C $(UIMAGE_COMPRESSION) $(UIMAGE_OPTS-y)       \
+	      -T $(UIMAGE_TYPE)                               \
+	      -a $(UIMAGE_LOADADDR) -e $(UIMAGE_ENTRYADDR)    \
+	      -n $(UIMAGE_NAME) -d $< $@
 $(obj)/uImage: $(obj)/kboot/boot.bin FORCE
 	$(call if_changed,uimage)
 uboot: $(obj)/uImage
@@ -56,13 +56,13 @@ endif
 ifneq ($(CONFIG_CHIP_GX6605S),)
 cmd_disk = rm -f $(obj)/disk.img; \
            $(DD) if=$(obj)/preload/preload.bin of=$(obj)/disk.img bs=512 conv=notrunc; \
-           $(DD) if=$(obj)/uImage of=$(obj)/disk.img bs=512 seek=16 conv=notrunc
+           $(if $(CONFIG_KBOOT_LINUX),$(DD) if="$(CONFIG_KBOOT_LINUX_UIMAGE)" of=$(obj)/disk.img bs=512 seek=16 conv=notrunc,$(DD) if=$(obj)/uImage of=$(obj)/disk.img bs=512 seek=16 conv=notrunc)
 
 quiet_cmd_merged = MERGED $@
       cmd_merged = cat $(obj)/preload/preload.bin > $@.tmp; \
-                   truncate -s 8192 $@.tmp; \
-                   cat $(obj)/uImage >> $@.tmp; \
-                   mv $@.tmp $@
+           truncate -s 8192 $@.tmp; \
+           $(if $(CONFIG_KBOOT_LINUX),cat "$(CONFIG_KBOOT_LINUX_UIMAGE)" >> $@.tmp;,cat $(obj)/uImage >> $@.tmp;) \
+           mv $@.tmp $@
 endif
 
 ifneq ($(CONFIG_CHIP_SUNIV),)
@@ -73,12 +73,22 @@ cmd_disk = rm -f $(obj)/disk.img; \
            $(DD) if=$(obj)/uImage of=$(obj)/disk.img bs=512 seek=64 conv=notrunc
 endif
 
+ifdef CONFIG_KBOOT_LINUX
+$(obj)/disk.img: $(obj)/preload/preload.bin FORCE
+	$(call if_changed,disk)
+else
 $(obj)/disk.img: $(obj)/preload/preload.bin $(obj)/uImage FORCE
 	$(call if_changed,disk)
+endif
 disk: $(obj)/disk.img
 
+ifdef CONFIG_KBOOT_LINUX
+$(obj)/gx6605s.bin: $(obj)/preload/preload.bin FORCE
+	$(call if_changed,merged)
+else
 $(obj)/gx6605s.bin: $(obj)/preload/preload.bin $(obj)/uImage FORCE
 	$(call if_changed,merged)
+endif
 merged: $(obj)/gx6605s.bin
 
 targets += kboot/boot.bin preload/preload.bin uImage disk.img gx6605s.bin

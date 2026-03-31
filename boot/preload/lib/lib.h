@@ -20,3 +20,9 @@ extern __noreturn void panic(const char *str, ...);
 
 #endif /* __ASSEMBLY__ */
 #endif /* _LIB_H_ */
+extern void extract_kernel(void *output_start, void *input_start, unsigned long len);
+extern void kernel_check(void *addr);
+#include <asm-generic/header.h>
+extern void *heap_alloc(size_t size);
+extern void heap_free(void *block);
+extern void heap_setup(void *array, size_t size);

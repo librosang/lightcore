@@ -49,10 +49,19 @@ preload: build/boot/preload FORCE
 tools: build/tools/kernelcrc build/tools/mkincbin FORCE
 
 build: asm-generic scripts_basic tools FORCE
+ifneq ($(CONFIG_KBOOT_LINUX),y)
 	$(Q)$(MAKE) $(build)=$(srctree)
+else
+	@:
+endif
 
+ifdef CONFIG_KBOOT_LINUX
+disk uboot merged: tools preload FORCE
+	$(Q)$(MAKE) $(build)=$(srctree)/boot $@
+else
 disk uboot merged: kboot preload FORCE
 	$(Q)$(MAKE) $(build)=$(srctree)/boot $@
+endif
 
 ifdef CONFIG_PRELOAD
 start: disk
