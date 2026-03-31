@@ -28,19 +28,34 @@ static inline __noreturn void spiflash_boot(void)
     entry = be32_to_cpu(head.ep);
     oldcrc = be32_to_cpu(head.dcrc);
 
+    uint32_t tmp_load = load;
+    if (head.comp == 1 && load == entry) {
+        /* Use a temporary safe address for compressed data to avoid overlapping with decompressed output */
+        tmp_load = 0x81000000;
+    }
+
     pr_boot("data size: %d\n", size);
     pr_boot("load address: %#x\n", load);
     pr_boot("entry point: %#x\n", entry);
-    norflash_read((void *)load, head_addr + sizeof(head), size);
+    norflash_read((void *)tmp_load, head_addr + sizeof(head), size);
 
-    newcrc = crc32_inline((void *)load, size, ~0);
+    newcrc = crc32_inline((void *)tmp_load, size, ~0);
     if (oldcrc != newcrc)
         panic("crc error 0x%x->0x%x\n", oldcrc, newcrc);
+
+    /* setup heap for decompression */
+    heap_setup((void *)0x80200000, 0x100000); /* 1MB heap in DRAM */
+
+    if (head.comp == 1) {
+        extract_kernel((void *)entry, (void *)tmp_load, size);
+    }
 
     pr_boot("boot form norflash...\n");
     pr_boot("total boot time: %ums\n", time_read());
 
-    kboot_start((void *)entry);
+    void (*kernel)(int, int, int) = (void *)entry;
+    kernel(0, 0, 0);
+    while(1);
 }
 
 asmlinkage void exception_handle(uint32_t vector)

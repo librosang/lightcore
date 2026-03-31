@@ -30,7 +30,7 @@ arch                := arm64
 endif # CONFIG_ARCH_ARM64
 
 ifdef CONFIG_ARCH_CSKY
-CROSS_COMPILE       := /home/ahmed/csky-elf-tools/bin/csky-elf-
+CROSS_COMPILE       := /opt/csky-elf-tools/bin/csky-elf-
 arch                := csky
 
 ifdef CONFIG_CPU_CK610

@@ -8,8 +8,8 @@ ENTRY(_start)
 
 MEMORY {
     SIG  (r)  : ORIGIN = 0x800ffffc,  LENGTH = 0x0004
-    SPL  (rwx): ORIGIN = 0x80100000,  LENGTH = 0x2000
-    SRAM (rwx): ORIGIN = 0x80102000,  LENGTH = 0x2000
+    SPL  (rwx): ORIGIN = 0x80100000,  LENGTH = 0x8000
+    SRAM (rwx): ORIGIN = 0x80108000,  LENGTH = 0x8000
 }
 
 SECTIONS {

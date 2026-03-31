@@ -10,6 +10,8 @@ include $(build_home)/compile.mk
 # Subproject                        #
 #####################################
 
+ifndef CONFIG_KBOOT_LINUX
+
 obj-y += doc/logo/
 obj-y += doc/translate/
 
@@ -44,5 +46,7 @@ elf-always-y += lightcore
 
 lightcore.dump-obj += lightcore
 dump-always-$(CONFIG_KERNEL_DUMP) += lightcore.dump
+
+endif
 
 clean-subdir-y += boot/
